@@ -3,10 +3,18 @@ name = "com-sandpolis-agent-micro"
 version = "0.1.0"
 edition = "2018"
 
+[[bin]]
+name = "agent"
+path = "src/main/rust"
+
+[[bin]]
+name = "bootagent"
+path = "src/main/rust"
+
 [dependencies]
 protobuf = { version = "2", features = ["with-bytes"] }
 rust-embed = "5.9"
-uuid = "0.8"
+uuid = { version = "0.8", features = ["v4"] }
 log = "0.4"
 env_logger = "0.8"
 dotproperties = "0.1"

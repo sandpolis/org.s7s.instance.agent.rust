@@ -8,10 +8,11 @@
 //                                                                            //
 //============================================================================//
 
-use core::net::MSG;
+use crate::core::net::message::MSG;
+use protobuf::Message;
 use std::net::TcpStream;
 
-// The maximum number of bytes in a protobuf varint32
+/// The maximum number of bytes in a protobuf varint32
 const MAX_VARINT_WIDTH: u32 = 5;
 
 pub struct Connection {
@@ -40,7 +41,7 @@ fn write_varint32(buffer: &[u8], value: i32) {
 	}
 }
 
-fn read_varint32(buffer: &[u8]) -> Result<i32> {
+fn read_varint32(buffer: &[u8]) -> Result<i32, std::num::ParseIntError> {
 	let mut tmp: i8 = buffer[0];
 	if tmp >= 0 {
 		return tmp;
@@ -60,7 +61,7 @@ fn read_varint32(buffer: &[u8]) -> Result<i32> {
 					result |= (tmp & 127) << 21;
 					result |= (tmp = buffer[4]) << 28;
 					if tmp < 0 {
-						return Err();
+						return Err(std::num::ParseIntError);
 					}
 				}
 			}
@@ -69,7 +70,7 @@ fn read_varint32(buffer: &[u8]) -> Result<i32> {
 	}
 }
 
-fn connection_send(connection: &Connection, message: &mut MSG) -> Result {
+fn connection_send(connection: &Connection, message: &mut MSG) {
 	connection
 		.stream
 		.write_all(message.write_to_bytes().unwrap());

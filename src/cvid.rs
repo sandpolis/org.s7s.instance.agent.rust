@@ -14,7 +14,7 @@ use core::net::MSG;
 use log::{debug, info};
 use std::net::TcpStream;
 
-fn cvid_handshake(connection: &TcpStream) {
+fn cvid_handshake(connection: &Connection) {
 	let mut rq_cvid = RQ_Cvid::new();
 	rq_cvid.instance = core::instance::InstanceType::AGENT;
 	rq_cvid.instance_flavor = core::instance::InstanceFlavor::MICRO;
