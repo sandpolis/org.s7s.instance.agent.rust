@@ -8,32 +8,39 @@
 //                                                                            //
 //============================================================================//
 
-use core::net::msg::RQ_Cvid;
-use core::net::msg::RS_Cvid;
+use crate::core::net::msg::*;
+use crate::core::instance::metatypes::*;
 use core::net::MSG;
 use log::{debug, info};
 use std::net::TcpStream;
+use std::time::{Duration, Instant};
 
-fn cvid_handshake(connection: &Connection) {
+fn cvid_handshake(connection: &Connection, uuid: &String) -> Result<(), CvidHandshakeError> {
+
+	let operation_start = Instant::now();
+
 	let mut rq_cvid = RQ_Cvid::new();
-	rq_cvid.instance = core::instance::InstanceType::AGENT;
-	rq_cvid.instance_flavor = core::instance::InstanceFlavor::MICRO;
-	rq_cvid.uuid = "".to_string();
+	rq_cvid.instance = InstanceType::AGENT;
+	rq_cvid.instance_flavor = InstanceFlavor::MICRO;
+	rq_cvid.uuid = uuid;
 
-	if (!Send(rq)) {
-		return false;
+	let rq = new_rq(rq_cvid);
+
+	if let Err(error) = connection.send(&rq) {
+		// TODO
 	}
 
-	if (!Recv(rs)) {
-		return false;
+	if let Ok(rs) = connection.recv() {
+		if let Ok(rs_cvid) = RS_Cvid::parse_from_bytes(&rs.payload) {
+			debug!("Completed CVID handshake in {:?} ms", operation_start.elapsed());
+			debug!("Discovered server UUID: {}", rs_cvid.server_uuid);
+			debug!("Discovered server CVID: {}", rs_cvid.server_cvid);
+		} else {
+			return Err()
+		}
+	} else {
+		return Err()
 	}
 
-	debug!("Completed CVID handshake in {} ms");
-	debug!(
-		"Server UUID: {}, server CVID: {}",
-		rs_cvid.server_uuid, rs_cvid.server_cvid
-	);
-	debug!("Assigned CVID: {}", rs_cvid.cvid);
-
-	return true;
+	return Ok()
 }
