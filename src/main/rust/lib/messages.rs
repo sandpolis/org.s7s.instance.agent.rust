@@ -8,11 +8,11 @@
 //                                                                            //
 //============================================================================//
 
-pub mod snapshot {
-	pub mod ui;
-}
+use crate::core::net::message::MSG;
+use protobuf::Message;
 
-fn main() {
-	env_logger::init();
-	crate::snapshot::ui::start();
+pub fn rq(payload: &Message) -> MSG {
+	let mut rq = MSG::new();
+	// TODO
+	return rq;
 }

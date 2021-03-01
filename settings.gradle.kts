@@ -8,11 +8,9 @@
 //                                                                            //
 //============================================================================//
 
-pub mod snapshot {
-	pub mod ui;
-}
+rootProject.name = "com.sandpolis.agent.micro"
 
-fn main() {
-	env_logger::init();
-	crate::snapshot::ui::start();
-}
+// Core modules
+include("module:com.sandpolis.core.foundation")
+include("module:com.sandpolis.core.instance")
+include("module:com.sandpolis.core.net")

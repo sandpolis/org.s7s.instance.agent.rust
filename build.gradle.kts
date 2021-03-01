@@ -11,5 +11,4 @@
 plugins {
 	id("sandpolis-module")
 	id("sandpolis-soi")
-	id("sandpolis-publish")
 }

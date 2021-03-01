@@ -15,7 +15,7 @@ use std::collections::HashMap;
 use std::net::TcpStream;
 use std::{thread, time};
 
-#[path = "../../module"]
+#[path = "../../../../../module"]
 pub mod core {
 
 	#[path = "com.sandpolis.core.foundation/gen/main/rust"]
@@ -28,16 +28,22 @@ pub mod core {
 	pub mod instance {
 		#[path = "auth.rs"] pub mod auth;
 		#[path = "group.rs"] pub mod group;
+		#[path = "metatypes.rs"] pub mod metatypes;
 	}
 
 	#[path = "com.sandpolis.core.net/gen/main/rust"]
 	pub mod net {
 		#[path = "message.rs"] pub mod message;
+		#[path = "msg_cvid.rs"] pub mod msg_cvid;
 	}
 }
 
-pub mod connection;
-pub mod uuid;
+#[path = "../lib"]
+pub mod lib {
+	pub mod connection;
+	pub mod messages;
+	pub mod uuid;
+}
 
 use protobuf::Message;
 use crate::core::instance::group::*;
@@ -47,6 +53,9 @@ use crate::core::instance::group::*;
 struct Assets;
 
 fn main() {
+
+	env_logger::init();
+
 	// Load build metadata
 	if let Some(build_properties) = Assets::get("build.properties") {
 		if let Ok(properties_vector) = parse_from_slice(&build_properties) {
