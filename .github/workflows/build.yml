@@ -1,0 +1,54 @@
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    name: "Build on ${{ matrix.os }}"
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ ubuntu-latest, macos-latest, windows-latest ]
+    steps:
+    - name: Install dependencies (ubuntu-latest)
+      if: matrix.os == 'ubuntu-latest'
+      run: |
+        sudo apt-get install libncursesw5-dev libprotobuf-dev
+    - name: Install dependencies (macos-latest)
+      if: matrix.os == 'macos-latest'
+      run: |
+        brew install protobuf
+    - name: Initialize Rust
+      uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+    - name: Initialize Java
+      uses: actions/setup-java@v1
+      with:
+        java-version: 15
+    - name: Checkout root repository
+      uses: actions/checkout@v2
+      with:
+        repository: sandpolis/com.sandpolis.agent.micro
+        submodules: recursive
+    - name: Generate protobuf sources
+      run: |
+        gradle --no-daemon :generateProto
+    - name: Build agent
+      uses: actions-rs/cargo@v1
+        with:
+          command: build
+          args: --release --bin agent
+    - name: Build boot agent
+      if: matrix.os == 'ubuntu-latest'
+      - uses: actions-rs/cargo@v1
+        with:
+          command: build
+          args: --release --bin bootagent
+    - name: Save artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: ${{ matrix.os }}-x86_64
+        path: target/release/agent
