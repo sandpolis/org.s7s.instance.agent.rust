@@ -22,8 +22,8 @@ jobs:
         brew install protobuf
     - name: Initialize Rust
       uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
+      with:
+        toolchain: stable
     - name: Initialize Java
       uses: actions/setup-java@v1
       with:
@@ -38,9 +38,9 @@ jobs:
         gradle --no-daemon :generateProto
     - name: Build agent
       uses: actions-rs/cargo@v1
-        with:
-          command: build
-          args: --release --bin agent
+      with:
+        command: build
+        args: --release --bin agent
     - name: Build boot agent
       if: matrix.os == 'ubuntu-latest'
       - uses: actions-rs/cargo@v1
