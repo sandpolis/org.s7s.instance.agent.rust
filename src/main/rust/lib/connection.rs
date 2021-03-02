@@ -20,9 +20,16 @@ use std::net::TcpStream;
 use std::sync::Mutex;
 use std::time::{Duration, Instant};
 
-struct CvidHandshakeError;
-struct MessageSendError;
-struct MessageRecvError;
+pub struct CvidHandshakeError;
+pub enum MessageSendError {
+	ConnectionClosed,
+	Other,
+}
+
+pub enum MessageRecvError {
+	ConnectionClosed,
+	Other,
+}
 
 pub enum ConnectionState {
 	NotConnected,
@@ -47,12 +54,12 @@ pub struct Connection {
 
 impl Connection {
 
-	fn send(&mut self, message: &MSG) -> Result<(), MessageSendError> {
+	pub fn send(&mut self, message: &MSG) -> Result<(), MessageSendError> {
 		self.stream.write_all(&message.write_to_bytes().unwrap());
 		return Ok(())
 	}
 
-	fn recv(&self, id: i32) -> Result<MSG, MessageRecvError> {
+	pub fn recv(&self, id: i32) -> Result<MSG, MessageRecvError> {
 
 		// First check the receive map
 		let mut receive_map = self.receive_map.lock().unwrap();
@@ -61,7 +68,7 @@ impl Connection {
 		}
 
 		// TODO read stream
-		return Err(MessageRecvError);
+		return Err(MessageRecvError::Other);
 	}
 
 	fn cvid_handshake(&mut self, uuid: String) -> Result<i32, CvidHandshakeError> {

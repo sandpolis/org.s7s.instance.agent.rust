@@ -35,7 +35,7 @@ jobs:
         submodules: recursive
     - name: Generate protobuf sources
       run: |
-        gradle --no-daemon :generateProto
+        gradle --no-daemon generateProto
     - name: Build agent
       uses: actions-rs/cargo@v1
       with:

@@ -14,7 +14,9 @@ path = "src/main/rust/bootagent/main.rs"
 [dependencies]
 dotproperties = "0.1"
 env_logger = "0.8"
+fasthash = "0.4"
 log = "0.4"
+memmap = "0.7"
 pancurses = { version = "0.16", features = ["wide"] }
 protobuf = { version = "2", features = ["with-bytes"] }
 rust-embed = "5.9"
