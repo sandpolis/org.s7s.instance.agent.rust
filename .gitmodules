@@ -10,3 +10,6 @@
 [submodule "module/com.sandpolis.core.net"]
 	path = module/com.sandpolis.core.net
 	url = ../com.sandpolis.core.net
+[submodule "plugin/com.sandpolis.plugin.snapshot"]
+	path = plugin/com.sandpolis.plugin.snapshot
+	url = ../com.sandpolis.plugin.snapshot

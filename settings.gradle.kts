@@ -14,3 +14,6 @@ rootProject.name = "com.sandpolis.agent.micro"
 include("module:com.sandpolis.core.foundation")
 include("module:com.sandpolis.core.instance")
 include("module:com.sandpolis.core.net")
+
+// Plugin modules
+include("plugin:com.sandpolis.plugin.snapshot")

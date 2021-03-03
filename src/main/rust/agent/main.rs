@@ -20,21 +20,21 @@ pub mod core {
 
 	#[path = "com.sandpolis.core.foundation/gen/main/rust"]
 	pub mod foundation {
-		#[path = "platform.rs"] pub mod platform;
-		#[path = "result.rs"] pub mod result;
+		pub mod platform;
+		pub mod result;
 	}
 
 	#[path = "com.sandpolis.core.instance/gen/main/rust"]
 	pub mod instance {
-		#[path = "auth.rs"] pub mod auth;
-		#[path = "group.rs"] pub mod group;
-		#[path = "metatypes.rs"] pub mod metatypes;
+		pub mod auth;
+		pub mod group;
+		pub mod metatypes;
 	}
 
 	#[path = "com.sandpolis.core.net/gen/main/rust"]
 	pub mod net {
-		#[path = "message.rs"] pub mod message;
-		#[path = "msg_cvid.rs"] pub mod msg_cvid;
+		pub mod message;
+		pub mod msg_cvid;
 	}
 }
 
