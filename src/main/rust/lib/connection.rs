@@ -19,6 +19,7 @@ use std::io::Write;
 use std::net::TcpStream;
 use std::sync::Mutex;
 use std::time::{Duration, Instant};
+use rustls::Session;
 
 pub struct CvidHandshakeError;
 pub enum MessageSendError {
@@ -100,12 +101,24 @@ impl Connection {
 	}
 }
 
-fn new(stream: TcpStream) -> Connection {
-	return Connection {
-		stream: stream,
+/// Create a new TLS connection to the given server.
+fn new(host: String, port: u16) -> Result<Connection, Error> {
+
+	let mut config = rustls::ClientConfig::new();
+	config
+		.root_store
+		.add_server_trust_anchors(&webpki_roots::TLS_SERVER_ROOTS);
+
+	let dns_name = webpki::DNSNameRef::try_from_ascii_str(host)?;
+	let mut session = rustls::ClientSession::new(&Arc::new(config), dns_name);
+	let mut tcp_stream = TcpStream::connect(host, port)?;
+	let tls_stream = Stream::new(&mut session, &mut tcp_stream);
+
+	return Ok(Connection {
+		stream: tls_stream,
 		state: ConnectionState::NotConnected,
 		cvid: None,
 		uuid: None,
 		receive_map: Mutex::new(HashMap::new()),
-	};
+	});
 }

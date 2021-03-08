@@ -8,13 +8,6 @@
 //                                                                            //
 //============================================================================//
 
-use dotproperties::parse_from_slice;
-use log::{debug, info};
-use rust_embed::RustEmbed;
-use std::collections::HashMap;
-use std::net::TcpStream;
-use std::{thread, time};
-
 #[path = "../../../../../module"]
 pub mod core {
 
@@ -45,46 +38,94 @@ pub mod lib {
 	pub mod uuid;
 }
 
-use protobuf::Message;
 use crate::core::instance::group::*;
+use dotproperties::parse_from_slice;
+use log::{debug, info, error};
+use protobuf::Message;
+use rust_embed::RustEmbed;
+use std::collections::HashMap;
+use std::net::TcpStream;
+use std::{thread, time};
 
+/// Contains embedded resources
 #[derive(RustEmbed)]
 #[folder = "res"]
-struct Assets;
+struct BinaryAssets;
 
-fn main() {
+fn main() -> Result<(), Error> {
 
+	// Initialize logging
 	env_logger::init();
 
 	// Load build metadata
-	if let Some(build_properties) = Assets::get("build.properties") {
-		if let Ok(properties_vector) = parse_from_slice(&build_properties) {
-			let properties: HashMap<_, _> = properties_vector.into_iter().collect();
+	if let Some(build_properties) = BinaryAssets::get("build.properties") {
+		let properties = parse_from_slice(&build_properties)?.into_iter().collect();
 
-			debug!("Build platform: {}", properties["build.platform"]);
-			debug!("Build JVM version: {}", properties["build.java_version"]);
-		}
+		// Output debug build info
+		debug!("Build platform: {}", properties["build.platform"]);
+		debug!("Build JVM version: {}", properties["build.java_version"]);
+
+		info!("Starting Sandpolis agent v{}", properties["build.version"]);
 	} else {
-		println!("Failed to locate embedded build.properties resource")
+		error!("Failed to locate embedded build.properties resource")
+		return Err(Error)
 	}
 
 	// Load agent configuration
-	if let Some(config_bytes) = Assets::get("config.bin") {
-		if let Ok(config) = AgentConfig::parse_from_bytes(&config_bytes) {}
+	if let Some(config_bytes) = BinaryAssets::get("config.bin") {
+		if let Ok(config) = AgentConfig::parse_from_bytes(&config_bytes) {
+
+		} else {
+			error!("The embedded configuration is invalid")
+		}
 	} else {
-		println!("Failed to locate embedded configuration")
+		debug!("Failed to locate embedded configuration")
 	}
+
+	// Prompt user
+	info!("Preparing to configure agent");
+	print!("Please enter the server's address [127.0.0.1]: ");
+
+	let mut server_host = String::new();
+	std::io::stdin().read_line(&mut server_host)?;
+
+	if server_host == "" {
+		server_host = "127.0.0.1".to_string();
+	}
+
+	// Attempt a connection
+	info!("Attempting connection to server");
+	if let Ok(connection) = Connection::new(server_host, 8768) {
+		// TODO
+	}
+
+	println!("Choose authentication scheme:");
+	println!("  1. Password");
+	println!("  2. None");
+
+	return Ok(())
 }
 
 fn connection_routine(config: &AgentConfig_LoopConfig) {
+
+	debug!("Starting connection routine");
+
 	let mut iteration: i32 = 0;
 	while iteration < config.iteration_limit || config.iteration_limit == 0 {
 		iteration += 1;
-		if let Ok(stream) = TcpStream::connect("127.0.0.1:8768") {
+		if let Ok(connection) = Connection::new("127.0.0.1", 8768) {
 
-			// Perform CVID handshake
 		}
 
 		thread::sleep(time::Duration::from_millis(config.cooldown as u64));
+	}
+}
+
+fn dispatch_routine(connection: &mut Connection) {
+
+	debug!("Starting command dispatch routine");
+
+	loop {
+		// TODO
 	}
 }
