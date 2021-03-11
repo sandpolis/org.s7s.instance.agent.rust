@@ -111,10 +111,17 @@ impl <'a> UiState<'a> {
 
 fn init_win_header(state: &UiState) {
 
+	// Write sixel image
+	if let Some(sixel) = BinaryAssets::get("sandpolis.sixel") {
+		state.wmove(0, 0);
+		print!(String::from_utf8_lossy(&sixel));
+	}
 }
 
 // Initialize the stats window and static content
 fn init_win_stats(state: &UiState) {
+
+	state.win_stats.mvaddstr(0, 0, "Creating snapshot of device: /dev/sda1. Please do not interrupt this process.");
 
 	state.win_stats.mvaddstr(2, 0, "Time remaining");
 	state.win_stats.mvaddstr(3, 0, "Network upload");

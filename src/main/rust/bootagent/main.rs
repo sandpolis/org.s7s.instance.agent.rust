@@ -52,6 +52,11 @@ pub mod lib {
 	pub mod uuid;
 }
 
+/// Contains embedded resources
+#[derive(RustEmbed)]
+#[folder = "resources/bootagent"]
+struct BinaryAssets;
+
 fn main() {
 	env_logger::init();
 	crate::snapshot::ui::start();
