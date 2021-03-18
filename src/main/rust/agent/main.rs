@@ -38,6 +38,7 @@ pub mod lib {
 	pub mod uuid;
 }
 
+use anyhow::{bail, Result};
 use crate::core::instance::group::*;
 use dotproperties::parse_from_slice;
 use log::{debug, info, error};
@@ -46,13 +47,25 @@ use rust_embed::RustEmbed;
 use std::collections::HashMap;
 use std::net::TcpStream;
 use std::{thread, time};
+use crate::lib::connection::*;
+use predicate::{Predicate, function};
 
 /// Contains embedded resources
 #[derive(RustEmbed)]
 #[folder = "res"]
 struct BinaryAssets;
 
-fn main() -> Result<(), Error> {
+const VALIDATOR_YN: Predicate<String> = function(|&x| x >= {
+	return match x {
+		"y" => true,
+		"Y" => true,
+		"n" => true,
+		"N" => true,
+		_ => false,
+	}
+});
+
+fn main() -> Result<()> {
 
 	// Initialize logging
 	env_logger::init();
@@ -67,8 +80,8 @@ fn main() -> Result<(), Error> {
 
 		info!("Starting Sandpolis agent v{}", properties["build.version"]);
 	} else {
-		error!("Failed to locate embedded build.properties resource")
-		return Err(Error)
+		error!("Failed to locate embedded build.properties resource");
+		bail!("");
 	}
 
 	// Load agent configuration
@@ -95,15 +108,45 @@ fn main() -> Result<(), Error> {
 
 	// Attempt a connection
 	info!("Attempting connection to server");
-	if let Ok(connection) = Connection::new(server_host, 8768) {
+	if let Ok(connection) = connect(server_host.as_str(), 8768) {
 		// TODO
 	}
 
-	println!("Choose authentication scheme:");
-	println!("  1. Password");
-	println!("  2. None");
+	if prompt_bool("Configure client certificate authentication?", false) {
+
+	}
+
+	if prompt_bool("Configure password authentication? ", false) {
+		if prompt_string("Enter password: ", "") {
+
+		}
+	}
 
 	return Ok(())
+}
+
+fn prompt_bool(prompt: &str, default: bool) -> bool {
+
+	let answer = prompt_string(prompt, match default {
+		true => "y",
+		false => "n",
+	}, VALIDATOR_YN);
+
+	return match answer.as_str() {
+		"y" => true,
+		"n" => false,
+	}	
+}
+
+fn prompt_string(prompt: &str, default: &str, validator: Predicate<String>) -> String {
+
+	let mut answer = String::new();
+	loop {
+		std::io::stdin().read_line(&mut answer);
+		if validator.eval(&answer) {
+			return answer;
+		}
+	}
 }
 
 fn connection_routine(config: &AgentConfig_LoopConfig) {
@@ -113,7 +156,7 @@ fn connection_routine(config: &AgentConfig_LoopConfig) {
 	let mut iteration: i32 = 0;
 	while iteration < config.iteration_limit || config.iteration_limit == 0 {
 		iteration += 1;
-		if let Ok(connection) = Connection::new("127.0.0.1", 8768) {
+		if let Ok(connection) = connect("127.0.0.1", 8768) {
 
 		}
 

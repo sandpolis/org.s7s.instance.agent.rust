@@ -12,3 +12,7 @@ plugins {
 	id("sandpolis-module")
 	id("sandpolis-soi")
 }
+
+task("generateProto") {
+	dependsOn(project(":module:com.sandpolis.core.foundation").tasks.findByName("generateProto"))
+}

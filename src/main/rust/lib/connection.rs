@@ -8,6 +8,7 @@
 //                                                                            //
 //============================================================================//
 
+use anyhow::Result;
 use crate::core::instance::metatypes::*;
 use crate::core::net::message::MSG;
 use crate::core::net::msg_cvid::*;
@@ -102,7 +103,7 @@ impl Connection {
 }
 
 /// Create a new TLS connection to the given server.
-fn new(host: String, port: u16) -> Result<Connection, Error> {
+pub fn connect(host: &str, port: u16) -> Result<Connection> {
 
 	let mut config = rustls::ClientConfig::new();
 	config
