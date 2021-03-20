@@ -48,22 +48,13 @@ use std::collections::HashMap;
 use std::net::TcpStream;
 use std::{thread, time};
 use crate::lib::connection::*;
-use predicate::{Predicate, function};
+use predicates::{Predicate, prelude::*};
+use std::io::{BufRead};
 
 /// Contains embedded resources
 #[derive(RustEmbed)]
 #[folder = "res"]
 struct BinaryAssets;
-
-const VALIDATOR_YN: Predicate<String> = function(|&x| x >= {
-	return match x {
-		"y" => true,
-		"Y" => true,
-		"n" => true,
-		"N" => true,
-		_ => false,
-	}
-});
 
 fn main() -> Result<()> {
 
@@ -72,7 +63,7 @@ fn main() -> Result<()> {
 
 	// Load build metadata
 	if let Some(build_properties) = BinaryAssets::get("build.properties") {
-		let properties = parse_from_slice(&build_properties)?.into_iter().collect();
+		let properties: HashMap<String, String> = parse_from_slice(&build_properties).expect("").into_iter().collect();
 
 		// Output debug build info
 		debug!("Build platform: {}", properties["build.platform"]);
@@ -117,9 +108,7 @@ fn main() -> Result<()> {
 	}
 
 	if prompt_bool("Configure password authentication? ", false) {
-		if prompt_string("Enter password: ", "") {
-
-		}
+		let password = prompt_string("Enter password: ", "", &predicate::function(|x: &String| x.len() >= 5_usize));
 	}
 
 	return Ok(())
@@ -130,23 +119,23 @@ fn prompt_bool(prompt: &str, default: bool) -> bool {
 	let answer = prompt_string(prompt, match default {
 		true => "y",
 		false => "n",
-	}, VALIDATOR_YN);
+	}, &predicate::in_iter(vec!["y".to_string(), "Y".to_string(), "n".to_string(), "N".to_string()]));
 
 	return match answer.as_str() {
 		"y" => true,
 		"n" => false,
+		_ => false,
 	}	
 }
 
-fn prompt_string(prompt: &str, default: &str, validator: Predicate<String>) -> String {
+fn prompt_string(prompt: &str, default: &str, validator: &dyn Predicate<String>) -> String {
 
-	let mut answer = String::new();
-	loop {
-		std::io::stdin().read_line(&mut answer);
-		if validator.eval(&answer) {
-			return answer;
+	for line in std::io::stdin().lock().lines().map(|l| l.unwrap()) {
+		if validator.eval(&line) {
+			return line;
 		}
 	}
+	return "".to_string();
 }
 
 fn connection_routine(config: &AgentConfig_LoopConfig) {

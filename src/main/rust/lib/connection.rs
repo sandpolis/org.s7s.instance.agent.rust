@@ -21,6 +21,10 @@ use std::net::TcpStream;
 use std::sync::Mutex;
 use std::time::{Duration, Instant};
 use rustls::Session;
+use std::sync::Arc;
+use rustls;
+use webpki;
+use webpki_roots;
 
 pub struct CvidHandshakeError;
 pub enum MessageSendError {
@@ -40,7 +44,7 @@ pub enum ConnectionState {
 pub struct Connection {
 
 	/// The underlying transport stream
-	pub stream: TcpStream,
+	pub stream: rustls::StreamOwned<rustls::ClientSession, TcpStream>,
 
 	/// The connection state
 	pub state: ConnectionState,
@@ -112,8 +116,8 @@ pub fn connect(host: &str, port: u16) -> Result<Connection> {
 
 	let dns_name = webpki::DNSNameRef::try_from_ascii_str(host)?;
 	let mut session = rustls::ClientSession::new(&Arc::new(config), dns_name);
-	let mut tcp_stream = TcpStream::connect(host, port)?;
-	let tls_stream = Stream::new(&mut session, &mut tcp_stream);
+	let mut tcp_stream = TcpStream::connect(host)?;
+	let tls_stream = rustls::StreamOwned::new(session, tcp_stream);
 
 	return Ok(Connection {
 		stream: tls_stream,

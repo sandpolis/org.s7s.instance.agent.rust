@@ -35,13 +35,13 @@ impl BlockSnapshotter<'_> {
 		let data = unsafe { MmapOptions::new().map(&device)? };
 
 		for i in (0_usize..device.metadata()?.len() as usize).step_by(self.block_size) {
-			let block = data[i..(i + self.block_size)];
+			let block = &data[i..(i + self.block_size)];
 			let hash = murmur3::hash128(&block);
 
 			// TODO check with metadata before sending
 
 			// Send update
-			let ev_snapshot = EV_SnapshotData::new();
+			let mut ev_snapshot = EV_SnapshotData::new();
 			ev_snapshot.data = block.to_vec();
 			let ev = MSG::new();
 			self.connection.send(&ev);

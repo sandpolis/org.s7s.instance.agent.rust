@@ -50,7 +50,7 @@ struct UiBlock<'a> {
 	pub index: i32,
 }
 
-impl <'a> UiBlock<'a> {
+impl UiBlock<'_> {
 
 	pub fn refresh(&self) {
 		
@@ -95,7 +95,7 @@ struct UiState<'a> {
 	pub blocks: Vec<UiBlock<'a>>,
 }
 
-impl <'a> UiState<'a> {
+impl UiState<'_> {
 	pub const TERM_WIDTH_MIN: i32 = 32;
 	pub const TERM_HEIGHT_MIN: i32 = 16;
 
@@ -112,10 +112,10 @@ impl <'a> UiState<'a> {
 fn init_win_header(state: &UiState) {
 
 	// Write sixel image
-	if let Some(sixel) = BinaryAssets::get("sandpolis.sixel") {
-		state.wmove(0, 0);
-		print!(String::from_utf8_lossy(&sixel));
-	}
+	//if let Some(sixel) = BinaryAssets::get("sandpolis.sixel") {
+	//	state.win_header.mv(0, 0);
+	//	print!(String::from_utf8_lossy(&sixel));
+	//}
 }
 
 // Initialize the stats window and static content
@@ -164,7 +164,7 @@ fn init_win_blocks(state: &UiState) {
 		let mut x = (i + offset) % state.terminal_x;
 
 		// If we're about to enter the dialog, add offset and retry this iteration
-		if (y >= state.dialog_topleft_y && y <= state.dialog_bottomleft_y && x == state.dialog_topleft_x) {
+		if y >= state.dialog_topleft_y && y <= state.dialog_bottomleft_y && x == state.dialog_topleft_x {
 			offset += UiState::DIALOG_WIDTH;
 			i -= 1;
 			continue;
@@ -172,12 +172,12 @@ fn init_win_blocks(state: &UiState) {
 
 		// Convert absolute coordinates to relative and determine the window
 		let local_window = 
-			if (y < state.dialog_topleft_y) {
+			if y < state.dialog_topleft_y {
 				&state.win_blocks_north
-			} else if (y >= state.dialog_topleft_y && y <= state.dialog_bottomleft_y && x < state.dialog_topleft_x) {
+			} else if y >= state.dialog_topleft_y && y <= state.dialog_bottomleft_y && x < state.dialog_topleft_x {
 				y -= state.dialog_topleft_y;
 				&state.win_blocks_west
-			} else if (y >= state.dialog_topleft_y && y <= state.dialog_bottomleft_y && x > state.dialog_topright_x) {
+			} else if y >= state.dialog_topleft_y && y <= state.dialog_bottomleft_y && x > state.dialog_topright_x {
 				y -= state.dialog_topleft_y;
 				x -= state.dialog_topright_x;
 				&state.win_blocks_east
@@ -187,13 +187,14 @@ fn init_win_blocks(state: &UiState) {
 			};
 
 		// Create the block
-		state.blocks.push(UiBlock {
+		let blk = UiBlock {
 			state: UiBlockState::Unseen,
-			win: &local_window,
+			win: local_window,
 			y: y,
 			x: x,
 			index: i,
-		});
+		};
+		//state.blocks.push(blk);
 	}
 }
 

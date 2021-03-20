@@ -52,9 +52,11 @@ pub mod lib {
 	pub mod uuid;
 }
 
+use rust_embed::RustEmbed;
+
 /// Contains embedded resources
 #[derive(RustEmbed)]
-#[folder = "resources/bootagent"]
+#[folder = "res"]
 struct BinaryAssets;
 
 fn main() {
