@@ -13,6 +13,14 @@ plugins {
 	id("sandpolis-soi")
 }
 
-task("generateProto") {
-	dependsOn(project(":module:com.sandpolis.core.foundation").tasks.findByName("generateProto"))
+if (project.getParent() == null) {
+	task("generateProto") {
+		// TODO
+	}
+} else {
+	task("generateProto") {
+		dependsOn(project(":module:com.sandpolis.core.foundation").tasks.findByName("generateProto"))
+		dependsOn(project(":module:com.sandpolis.core.instance").tasks.findByName("generateProto"))
+		dependsOn(project(":module:com.sandpolis.core.net").tasks.findByName("generateProto"))
+	}
 }

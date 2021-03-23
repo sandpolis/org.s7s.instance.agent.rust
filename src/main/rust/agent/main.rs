@@ -63,7 +63,7 @@ fn main() -> Result<()> {
 
 	// Load build metadata
 	if let Some(build_properties) = BinaryAssets::get("build.properties") {
-		let properties: HashMap<String, String> = parse_from_slice(&build_properties).expect("").into_iter().collect();
+		let properties: HashMap<String, String> = parse_from_slice(&build_properties).expect("Failed to parse properties file").into_iter().collect();
 
 		// Output debug build info
 		debug!("Build platform: {}", properties["build.platform"]);

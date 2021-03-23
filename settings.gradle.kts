@@ -9,26 +9,3 @@
 //============================================================================//
 
 rootProject.name = "com.sandpolis.agent.micro"
-
-sourceControl {
-	gitRepository("https://github.com/sandpolis/com.sandpolis.core.foundation.git") {
-		producesModule("com.sandpolis:core.foundation")
-	}
-}
-sourceControl {
-	gitRepository("https://github.com/sandpolis/com.sandpolis.core.instance.git") {
-		producesModule("com.sandpolis:core.instance")
-	}
-}
-sourceControl {
-	gitRepository("https://github.com/sandpolis/com.sandpolis.core.net.git") {
-		producesModule("com.sandpolis:core.net")
-	}
-}
-sourceControl {
-	gitRepository("https://github.com/sandpolis/com.sandpolis.plugin.snapshot.git") {
-		producesModule("com.sandpolis:plugin.snapshot")
-	}
-}
-
-include(":module:com.sandpolis.core.foundation")
