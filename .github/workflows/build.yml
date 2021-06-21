@@ -28,14 +28,17 @@ jobs:
       uses: actions/setup-java@v1
       with:
         java-version: 16
-    - name: Checkout root repository
+    - name: Checkout repository
       uses: actions/checkout@v2
       with:
-        repository: sandpolis/com.sandpolis.agent.micro
         submodules: recursive
-    - name: Generate protobuf sources
-      run: |
-        gradle --no-daemon generateProto
+    - name: Assemble protobuf sources
+      uses: eskatos/gradle-command-action@v1
+      with:
+        arguments: assembleProto --no-daemon
+      env:
+        GITHUB_ACTOR: ${{ github.actor }}
+        GITHUB_TOKEN: ${{ github.token }}
     - name: Build agent
       uses: actions-rs/cargo@v1
       with:

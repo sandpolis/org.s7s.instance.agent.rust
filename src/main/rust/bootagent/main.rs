@@ -13,33 +13,31 @@ pub mod snapshot {
 	pub mod utils;
 }
 
-#[path = "../../../../../module"]
 pub mod core {
 
-	#[path = "com.sandpolis.core.foundation/gen/main/rust"]
+	#[path = "../gen/com.sandpolis.core.foundation"]
 	pub mod foundation {
 		pub mod platform;
 		pub mod result;
 	}
 
-	#[path = "com.sandpolis.core.instance/gen/main/rust"]
+	#[path = "../gen/com.sandpolis.core.instance"]
 	pub mod instance {
 		pub mod auth;
 		pub mod group;
 		pub mod metatypes;
 	}
 
-	#[path = "com.sandpolis.core.net/gen/main/rust"]
+	#[path = "../gen/com.sandpolis.core.net"]
 	pub mod net {
 		pub mod message;
 		pub mod msg_cvid;
 	}
 }
 
-#[path = "../../../../../plugin"]
 pub mod plugin {
 
-	#[path = "com.sandpolis.plugin.snapshot/gen/main/rust"]
+	#[path = "../gen/com.sandpolis.plugin.snapshot"]
 	pub mod snapshot {
 		pub mod msg_snapshot;
 	}

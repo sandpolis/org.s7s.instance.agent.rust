@@ -1,3 +1,4 @@
+**/*.rs.bk
 **/gen/main/**
 **/src/main/resources/build.properties
 *.iml
@@ -16,6 +17,6 @@
 .vagrant
 bin
 build
-**/*.rs.bk
 debug/
+src/main/*/gen
 target/
