@@ -45,7 +45,10 @@ if (project.getParent() == null) {
 		into("src/main/rust/gen")
 
 		proto.files.forEach { dep ->
-			into(dep.absolutePath.substring(dep.absolutePath.lastIndexOf("/") + 1).removeSuffix(".zip")) {
+			var path = dep.absolutePath.split("-").takeLast(3)
+			path = path.first().split("\\.|/".toRegex()).takeLast(2)
+
+			into("com.sandpolis.${path[0]}.${path[1]}") {
 				with(copySpec {
 					from(zipTree(dep))
 				})
