@@ -8,22 +8,23 @@
 //                                                                            //
 //============================================================================//
 
+#[path = "../gen"]
 pub mod core {
 
-	#[path = "../gen/com.sandpolis.core.foundation"]
+	#[path = "com.sandpolis.core.foundation"]
 	pub mod foundation {
 		pub mod platform;
 		pub mod result;
 	}
 
-	#[path = "../gen/com.sandpolis.core.instance"]
+	#[path = "com.sandpolis.core.instance"]
 	pub mod instance {
 		pub mod auth;
 		pub mod group;
 		pub mod metatypes;
 	}
 
-	#[path = "../gen/com.sandpolis.core.net"]
+	#[path = "com.sandpolis.core.net"]
 	pub mod net {
 		pub mod message;
 		pub mod msg_cvid;

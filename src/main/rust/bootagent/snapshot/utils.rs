@@ -41,7 +41,7 @@ impl BlockSnapshotter<'_> {
 			// TODO check with metadata before sending
 
 			// Send update
-			let mut ev_snapshot = EV_SnapshotData::new();
+			let mut ev_snapshot = EV_SnapshotBlock::new();
 			ev_snapshot.data = block.to_vec();
 			let ev = MSG::new();
 			self.connection.send(&ev);

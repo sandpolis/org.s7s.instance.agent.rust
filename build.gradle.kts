@@ -63,7 +63,7 @@ if (project.getParent() == null) {
 		into("src/main/rust/gen")
 
 		for (dep in protoDependencies) {
-			dependsOn("${dep}:generateProto")
+			dependsOn("${dep}:fixRustImports")
 
 			into(dep.substring(dep.lastIndexOf(":") + 1)) {
 				with (copySpec {
@@ -77,5 +77,5 @@ if (project.getParent() == null) {
 val assemble by tasks.creating(Exec::class) {
 	dependsOn(tasks.findByName("assembleProto"))
 	workingDir(project.getProjectDir())
-	commandLine("cargo build")
+	commandLine(listOf("cargo", "build"))
 }
