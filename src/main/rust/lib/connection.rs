@@ -83,7 +83,7 @@ impl Connection {
 
 		let mut rq_cvid = RQ_Cvid::new();
 		rq_cvid.instance = InstanceType::AGENT;
-		rq_cvid.instance_flavor = InstanceFlavor::MICRO;
+		rq_cvid.instance_flavor = InstanceFlavor::AGENT_MICRO;
 		rq_cvid.uuid = uuid;
 
 		let rq = rq(&rq_cvid);
