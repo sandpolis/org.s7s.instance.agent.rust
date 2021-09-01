@@ -21,7 +21,7 @@ memmap = "0.7"
 pancurses = { version = "0.16", features = ["wide"] }
 predicates = "2.0.0"
 protobuf = { version = "2", features = ["with-bytes"] }
-rust-embed = "5.9"
+rust-embed = "6.1"
 rustls = "0.19.0"
 uuid = { version = "0.8", features = ["v4"] }
 webpki-roots = "0.21"
