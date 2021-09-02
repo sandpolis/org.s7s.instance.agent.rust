@@ -35,23 +35,7 @@ jobs:
     - name: Assemble protobuf sources
       uses: eskatos/gradle-command-action@v1
       with:
-        arguments: assembleProto --no-daemon
+        arguments: build --no-daemon
       env:
         GITHUB_ACTOR: ${{ github.actor }}
         GITHUB_TOKEN: ${{ github.token }}
-    - name: Build agent
-      uses: actions-rs/cargo@v1
-      with:
-        command: build
-        args: --release --bin agent
-    - name: Build boot agent
-      uses: actions-rs/cargo@v1
-      with:
-        command: build
-        args: --release --bin bootagent
-      if: matrix.os == 'ubuntu-latest'
-    - name: Save artifact
-      uses: actions/upload-artifact@v2
-      with:
-        name: ${{ matrix.os }}-x86_64
-        path: target/release/agent

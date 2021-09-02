@@ -56,7 +56,7 @@ use rust_embed::RustEmbed;
 
 /// Contains embedded resources
 #[derive(RustEmbed)]
-#[folder = "res"]
+#[folder = "src/main/resources/bootagent"]
 struct BinaryAssets;
 
 fn main() {

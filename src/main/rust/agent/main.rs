@@ -53,7 +53,7 @@ use std::io::{BufRead};
 
 /// Contains embedded resources
 #[derive(RustEmbed)]
-#[folder = "res"]
+#[folder = "src/main/resources/agent"]
 struct BinaryAssets;
 
 fn main() -> Result<()> {

@@ -8,6 +8,8 @@
 //                                                                            //
 //============================================================================//
 
+import org.gradle.internal.os.OperatingSystem
+
 plugins {
 	id("sandpolis-module")
 	id("sandpolis-soi")
@@ -63,7 +65,7 @@ if (project.getParent() == null) {
 		into("src/main/rust/gen")
 
 		for (dep in protoDependencies) {
-			dependsOn("${dep}:fixRustImports")
+			//dependsOn("${dep}:fixRustImports")
 
 			into(dep.substring(dep.lastIndexOf(":") + 1)) {
 				with (copySpec {
@@ -74,8 +76,37 @@ if (project.getParent() == null) {
 	}
 }
 
-val assemble by tasks.creating(Exec::class) {
-	dependsOn(tasks.findByName("assembleProto"))
-	workingDir(project.getProjectDir())
-	commandLine(listOf("cargo", "build"))
+val build by tasks.creating(DefaultTask::class) {
+}
+
+if (OperatingSystem.current().isLinux()) {
+
+	val microLinuxAmd64 by tasks.creating(Exec::class) {
+		dependsOn(tasks.findByName("assembleProto"))
+		workingDir(project.getProjectDir())
+		commandLine(listOf("cargo", "build", "--release", "--bin", "agent", "--bin", "bootagent", "--target=x86_64-unknown-linux-gnu"))
+	}
+	build.dependsOn(microLinuxAmd64)
+
+	val microLinuxAarch64 by tasks.creating(Exec::class) {
+		dependsOn(tasks.findByName("assembleProto"))
+		workingDir(project.getProjectDir())
+		commandLine(listOf("cargo", "build", "--release", "--bin", "agent", "--target=aarch64-unknown-linux-gnu"))
+	}
+
+	val microLinuxArmv7 by tasks.creating(Exec::class) {
+		dependsOn(tasks.findByName("assembleProto"))
+		workingDir(project.getProjectDir())
+		commandLine(listOf("cargo", "build", "--release", "--bin", "agent", "--target=armv7-unknown-linux-musleabihf"))
+	}
+}
+
+if (OperatingSystem.current().isWindows()) {
+
+	val microWindowsAmd64 by tasks.creating(Exec::class) {
+		dependsOn(tasks.findByName("assembleProto"))
+		workingDir(project.getProjectDir())
+		commandLine(listOf("cargo", "build", "--release", "--bin", "agent", "--bin", "bootagent", "--target=x86_64-pc-windows-gnu"))
+	}
+	build.dependsOn(microWindowsAmd64)
 }
