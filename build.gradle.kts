@@ -106,7 +106,7 @@ if (OperatingSystem.current().isWindows()) {
 	val microWindowsAmd64 by tasks.creating(Exec::class) {
 		dependsOn(tasks.findByName("assembleProto"))
 		workingDir(project.getProjectDir())
-		commandLine(listOf("cargo", "build", "--release", "--bin", "agent", "--bin", "bootagent", "--target=x86_64-pc-windows-gnu"))
+		commandLine(listOf("cargo", "build", "--release", "--bin", "agent", "--bin", "bootagent", "--target=x86_64-pc-windows-msvc"))
 	}
 	build.dependsOn(microWindowsAmd64)
 }
