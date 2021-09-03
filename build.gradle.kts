@@ -8,11 +8,10 @@
 //                                                                            //
 //============================================================================//
 
-import org.gradle.internal.os.OperatingSystem
-
 plugins {
 	id("sandpolis-module")
 	id("sandpolis-soi")
+	id("sandpolis-publish")
 }
 
 val protoDependencies = listOf(
@@ -65,7 +64,6 @@ if (project.getParent() == null) {
 		into("src/main/rust/gen")
 
 		for (dep in protoDependencies) {
-			//dependsOn("${dep}:fixRustImports")
 
 			into(dep.substring(dep.lastIndexOf(":") + 1)) {
 				with (copySpec {
@@ -76,37 +74,70 @@ if (project.getParent() == null) {
 	}
 }
 
-val build by tasks.creating(DefaultTask::class) {
+val buildLinuxAmd64 by tasks.creating(Exec::class) {
+	dependsOn(tasks.findByName("assembleProto"))
+	workingDir(project.getProjectDir())
+	commandLine(listOf("cross", "build", "--release", "--bin", "agent", "--bin", "bootagent", "--target=x86_64-unknown-linux-gnu"))
 }
+tasks.findByName("build")?.dependsOn(buildLinuxAmd64)
 
-if (OperatingSystem.current().isLinux()) {
-
-	val microLinuxAmd64 by tasks.creating(Exec::class) {
-		dependsOn(tasks.findByName("assembleProto"))
-		workingDir(project.getProjectDir())
-		commandLine(listOf("cargo", "build", "--release", "--bin", "agent", "--bin", "bootagent", "--target=x86_64-unknown-linux-gnu"))
-	}
-	build.dependsOn(microLinuxAmd64)
-
-	val microLinuxAarch64 by tasks.creating(Exec::class) {
-		dependsOn(tasks.findByName("assembleProto"))
-		workingDir(project.getProjectDir())
-		commandLine(listOf("cargo", "build", "--release", "--bin", "agent", "--target=aarch64-unknown-linux-gnu"))
-	}
-
-	val microLinuxArmv7 by tasks.creating(Exec::class) {
-		dependsOn(tasks.findByName("assembleProto"))
-		workingDir(project.getProjectDir())
-		commandLine(listOf("cargo", "build", "--release", "--bin", "agent", "--target=armv7-unknown-linux-musleabihf"))
-	}
+val buildLinuxAarch64 by tasks.creating(Exec::class) {
+	dependsOn(tasks.findByName("assembleProto"))
+	workingDir(project.getProjectDir())
+	commandLine(listOf("cross", "build", "--release", "--bin", "agent", "--bin", "bootagent", "--target=aarch64-unknown-linux-gnu"))
 }
+tasks.findByName("build")?.dependsOn(buildLinuxAarch64)
 
-if (OperatingSystem.current().isWindows()) {
+val buildLinuxArmv7 by tasks.creating(Exec::class) {
+	dependsOn(tasks.findByName("assembleProto"))
+	workingDir(project.getProjectDir())
+	commandLine(listOf("cross", "build", "--release", "--bin", "agent", "--bin", "bootagent", "--target=armv7-unknown-linux-musleabihf"))
+}
+tasks.findByName("build")?.dependsOn(buildLinuxArmv7)
 
-	val microWindowsAmd64 by tasks.creating(Exec::class) {
-		dependsOn(tasks.findByName("assembleProto"))
-		workingDir(project.getProjectDir())
-		commandLine(listOf("cargo", "build", "--release", "--bin", "agent", "--bin", "bootagent", "--target=x86_64-pc-windows-msvc"))
+val buildWindowsAmd64 by tasks.creating(Exec::class) {
+	dependsOn(tasks.findByName("assembleProto"))
+	workingDir(project.getProjectDir())
+	commandLine(listOf("cross", "build", "--release", "--bin", "agent", "--target=x86_64-pc-windows-gnu"))
+}
+tasks.findByName("build")?.dependsOn(buildWindowsAmd64)
+
+publishing {
+	publications {
+		create<MavenPublication>("mavenAgentLinuxAmd64") {
+			groupId = "com.sandpolis"
+			artifactId = "agent-linux-amd64"
+			version = project.version.toString()
+
+			artifact(project.file("target/x86_64-unknown-linux-gnu/release/agent"))
+		}
+		tasks.findByName("mavenAgentLinuxAmd64")?.dependsOn(buildLinuxAmd64)
+
+		create<MavenPublication>("mavenBootagentLinuxAmd64") {
+			groupId = "com.sandpolis"
+			artifactId = "bootagent-linux-amd64"
+			version = project.version.toString()
+
+			artifact(project.file("target/x86_64-unknown-linux-gnu/release/bootagent"))
+		}
+		tasks.findByName("mavenBootagentLinuxAmd64")?.dependsOn(buildLinuxAmd64)
+
+		create<MavenPublication>("mavenAgentLinuxAarch64") {
+			groupId = "com.sandpolis"
+			artifactId = "agent-linux-aarch64"
+			version = project.version.toString()
+
+			artifact(project.file("target/aarch64-unknown-linux-gnu/release/agent"))
+		}
+		tasks.findByName("mavenAgentLinuxAarch64")?.dependsOn(buildLinuxAmd64)
+
+		create<MavenPublication>("mavenBootagentLinuxAarch64") {
+			groupId = "com.sandpolis"
+			artifactId = "bootagent-linux-aarch64"
+			version = project.version.toString()
+
+			artifact(project.file("target/aarch64-unknown-linux-gnu/release/bootagent"))
+		}
+		tasks.findByName("mavenBootagentLinuxAarch64")?.dependsOn(buildLinuxAmd64)
 	}
-	build.dependsOn(microWindowsAmd64)
 }
