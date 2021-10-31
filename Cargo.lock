@@ -358,9 +358,9 @@ dependencies = [
 
 [[package]]
 name = "protobuf"
-version = "2.22.1"
+version = "3.0.0-alpha.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1b7f4a129bb3754c25a4e04032a90173c68f85168f77118ac4cb4936e7f06f92"
+checksum = "179dfed5ac5d90df13ede91b3035443ec07e0ec964b86afb10700597b5f990bc"
 dependencies = [
  "bytes",
 ]
