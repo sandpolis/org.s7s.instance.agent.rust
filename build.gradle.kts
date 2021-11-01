@@ -23,28 +23,28 @@ dependencies {
 val buildLinuxAmd64 by tasks.creating(Exec::class) {
 	dependsOn("extractDownloadedProto")
 	workingDir(project.getProjectDir())
-	commandLine(listOf("cross", "build", "--release", "--bin", "agent", "--bin", "bootagent", "--target=x86_64-unknown-linux-gnu"))
+	commandLine(listOf("cross", "build", "--release", "--target=x86_64-unknown-linux-gnu"))
 	outputs.files("target/x86_64-unknown-linux-gnu/release/bootagent", "target/x86_64-unknown-linux-gnu/release/agent")
 }
 
 val buildLinuxAarch64 by tasks.creating(Exec::class) {
 	dependsOn("extractDownloadedProto")
 	workingDir(project.getProjectDir())
-	commandLine(listOf("cross", "build", "--release", "--bin", "agent", "--bin", "bootagent", "--target=aarch64-unknown-linux-gnu"))
+	commandLine(listOf("cross", "build", "--release", "--target=aarch64-unknown-linux-gnu"))
 	outputs.files("target/aarch64-unknown-linux-gnu/release/bootagent", "target/aarch64-unknown-linux-gnu/release/agent")
 }
 
 val buildLinuxArmv7 by tasks.creating(Exec::class) {
 	dependsOn("extractDownloadedProto")
 	workingDir(project.getProjectDir())
-	commandLine(listOf("cross", "build", "--release", "--bin", "agent", "--bin", "bootagent", "--target=armv7-unknown-linux-musleabihf"))
+	commandLine(listOf("cross", "build", "--release", "--target=armv7-unknown-linux-musleabihf"))
 	outputs.files("target/armv7-unknown-linux-musleabihf/release/bootagent", "target/armv7-unknown-linux-musleabihf/release/agent")
 }
 
 val buildWindowsAmd64 by tasks.creating(Exec::class) {
 	dependsOn("extractDownloadedProto")
 	workingDir(project.getProjectDir())
-	commandLine(listOf("cross", "build", "--release", "--bin", "agent", "--target=x86_64-pc-windows-gnu"))
+	commandLine(listOf("cross", "build", "--release", "--target=x86_64-pc-windows-gnu"))
 	outputs.files("target/x86_64-pc-windows-gnu/release/agent")
 }
 
@@ -74,24 +74,5 @@ publishing {
 			}
 		}
 		tasks.findByName("publishAgentPublicationToCentralStagingRepository")?.dependsOn("build")
-
-		create<MavenPublication>("bootagent") {
-			groupId = "com.sandpolis"
-			artifactId = "agent.boot"
-			version = project.version.toString()
-
-			artifact(buildLinuxAmd64.outputs.files.filter { it.name == "bootagent" }.getSingleFile()) {
-				classifier = "linux-amd64"
-			}
-
-			artifact(buildLinuxAarch64.outputs.files.filter { it.name == "bootagent" }.getSingleFile()) {
-				classifier = "linux-aarch64"
-			}
-
-			artifact(buildLinuxArmv7.outputs.files.filter { it.name == "bootagent" }.getSingleFile()) {
-				classifier = "linux-armv7"
-			}
-		}
-		tasks.findByName("publishBootagentPublicationToCentralStagingRepository")?.dependsOn("build")
 	}
 }
