@@ -49,8 +49,8 @@ pub struct Connection {
 	/// The connection state
 	pub state: ConnectionState,
 
-	/// The remote CVID
-	pub cvid: Option<i32>,
+	/// The remote SID
+	pub sid: Option<i32>,
 
 	/// The remote UUID
 	pub uuid: Option<String>,
@@ -94,11 +94,11 @@ impl Connection {
 
 		if let Ok(rs) = self.recv(rq.id) {
 			if let Ok(rs_cvid) = RS_Cvid::parse_from_bytes(&rs.payload) {
-				debug!("Completed CVID handshake in {:?} ms", operation_start.elapsed());
-				debug!("Assigned CVID: {}", rs_cvid.cvid);
+				debug!("Completed SID handshake in {:?} ms", operation_start.elapsed());
+				debug!("Assigned SID: {}", rs_cvid.sid);
 				debug!("Discovered server UUID: {}", rs_cvid.server_uuid);
-				debug!("Discovered server CVID: {}", rs_cvid.server_cvid);
-				return Ok(rs_cvid.cvid);
+				debug!("Discovered server SID: {}", rs_cvid.server_cvid);
+				return Ok(rs_cvid.sid);
 			}
 		}
 
@@ -122,7 +122,7 @@ pub fn connect(host: &str, port: u16) -> Result<Connection> {
 	return Ok(Connection {
 		stream: tls_stream,
 		state: ConnectionState::NotConnected,
-		cvid: None,
+		sid: None,
 		uuid: None,
 		receive_map: Mutex::new(HashMap::new()),
 	});

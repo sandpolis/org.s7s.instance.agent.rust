@@ -9,10 +9,6 @@ jobs:
     name: "Build on ubuntu-latest"
     runs-on: ubuntu-latest
     steps:
-      - name: Install dependencies (ubuntu-latest)
-        run: |
-          sudo apt-get install libncursesw5-dev libprotobuf-dev
-
       - name: Initialize QEMU
         uses: docker/setup-qemu-action@v1
 

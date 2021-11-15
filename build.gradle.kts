@@ -21,28 +21,28 @@ dependencies {
 }
 
 val buildLinuxAmd64 by tasks.creating(Exec::class) {
-	dependsOn("extractDownloadedProto")
+	dependsOn("assembleProto")
 	workingDir(project.getProjectDir())
 	commandLine(listOf("cross", "build", "--release", "--target=x86_64-unknown-linux-gnu"))
 	outputs.files("target/x86_64-unknown-linux-gnu/release/bootagent", "target/x86_64-unknown-linux-gnu/release/agent")
 }
 
 val buildLinuxAarch64 by tasks.creating(Exec::class) {
-	dependsOn("extractDownloadedProto")
+	dependsOn("assembleProto")
 	workingDir(project.getProjectDir())
 	commandLine(listOf("cross", "build", "--release", "--target=aarch64-unknown-linux-gnu"))
 	outputs.files("target/aarch64-unknown-linux-gnu/release/bootagent", "target/aarch64-unknown-linux-gnu/release/agent")
 }
 
 val buildLinuxArmv7 by tasks.creating(Exec::class) {
-	dependsOn("extractDownloadedProto")
+	dependsOn("assembleProto")
 	workingDir(project.getProjectDir())
 	commandLine(listOf("cross", "build", "--release", "--target=armv7-unknown-linux-musleabihf"))
 	outputs.files("target/armv7-unknown-linux-musleabihf/release/bootagent", "target/armv7-unknown-linux-musleabihf/release/agent")
 }
 
 val buildWindowsAmd64 by tasks.creating(Exec::class) {
-	dependsOn("extractDownloadedProto")
+	dependsOn("assembleProto")
 	workingDir(project.getProjectDir())
 	commandLine(listOf("cross", "build", "--release", "--target=x86_64-pc-windows-gnu"))
 	outputs.files("target/x86_64-pc-windows-gnu/release/agent")
