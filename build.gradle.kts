@@ -9,8 +9,9 @@
 //============================================================================//
 
 plugins {
-	id("sandpolis-instance")
-	id("sandpolis-publish")
+	id("com.sandpolis.build.module") version "+"
+	id("com.sandpolis.build.instance") version "+"
+	id("com.sandpolis.build.publish") version "+"
 }
 
 dependencies {
@@ -24,21 +25,21 @@ val buildLinuxAmd64 by tasks.creating(Exec::class) {
 	dependsOn("assembleProto")
 	workingDir(project.getProjectDir())
 	commandLine(listOf("cross", "build", "--release", "--target=x86_64-unknown-linux-gnu"))
-	outputs.files("target/x86_64-unknown-linux-gnu/release/bootagent", "target/x86_64-unknown-linux-gnu/release/agent")
+	outputs.files("target/x86_64-unknown-linux-gnu/release/agent")
 }
 
 val buildLinuxAarch64 by tasks.creating(Exec::class) {
 	dependsOn("assembleProto")
 	workingDir(project.getProjectDir())
 	commandLine(listOf("cross", "build", "--release", "--target=aarch64-unknown-linux-gnu"))
-	outputs.files("target/aarch64-unknown-linux-gnu/release/bootagent", "target/aarch64-unknown-linux-gnu/release/agent")
+	outputs.files("target/aarch64-unknown-linux-gnu/release/agent")
 }
 
 val buildLinuxArmv7 by tasks.creating(Exec::class) {
 	dependsOn("assembleProto")
 	workingDir(project.getProjectDir())
 	commandLine(listOf("cross", "build", "--release", "--target=armv7-unknown-linux-musleabihf"))
-	outputs.files("target/armv7-unknown-linux-musleabihf/release/bootagent", "target/armv7-unknown-linux-musleabihf/release/agent")
+	outputs.files("target/armv7-unknown-linux-musleabihf/release/agent")
 }
 
 val buildWindowsAmd64 by tasks.creating(Exec::class) {
@@ -57,19 +58,19 @@ publishing {
 			artifactId = "agent.micro"
 			version = project.version.toString()
 
-			artifact(buildLinuxAmd64.outputs.files.filter { it.name == "agent" }.getSingleFile()) {
+			artifact("target/x86_64-unknown-linux-gnu/release/agent") {
 				classifier = "linux-amd64"
 			}
 
-			artifact(buildLinuxAarch64.outputs.files.filter { it.name == "agent" }.getSingleFile()) {
+			artifact("target/aarch64-unknown-linux-gnu/release/agent") {
 				classifier = "linux-aarch64"
 			}
 
-			artifact(buildLinuxArmv7.outputs.files.filter { it.name == "agent" }.getSingleFile()) {
+			artifact("target/armv7-unknown-linux-musleabihf/release/agent") {
 				classifier = "linux-armv7"
 			}
 
-			artifact(buildWindowsAmd64.outputs.files.getSingleFile()) {
+			artifact("target/x86_64-pc-windows-gnu/release/agent") {
 				classifier = "windows-amd64"
 			}
 		}
