@@ -11,7 +11,7 @@
 use anyhow::Result;
 use crate::core::instance::metatypes::*;
 use crate::core::net::message::MSG;
-use crate::core::net::msg_cvid::*;
+use crate::core::net::messages::*;
 use crate::lib::messages::rq;
 use log::{debug, info};
 use protobuf::Message;
@@ -77,28 +77,28 @@ impl Connection {
 		return Err(MessageRecvError::Other);
 	}
 
-	fn cvid_handshake(&mut self, uuid: String) -> Result<i32, CvidHandshakeError> {
+	fn session_handshake(&mut self, uuid: String) -> Result<i32, CvidHandshakeError> {
 
 		let operation_start = Instant::now();
 
-		let mut rq_cvid = RQ_Cvid::new();
-		rq_cvid.instance = InstanceType::AGENT;
-		rq_cvid.instance_flavor = InstanceFlavor::AGENT_MICRO;
-		rq_cvid.uuid = uuid;
+		let mut rq_session = RQ_Session::new();
+		rq_session.instance_type = InstanceType::AGENT;
+		rq_session.instance_flavor = InstanceFlavor::AGENT_MICRO;
+		rq_session.instance_uuid = uuid;
 
-		let rq = rq(&rq_cvid);
+		let rq = rq(&rq_session);
 
 		if let Err(error) = self.send(&rq) {
 			// TODO
 		}
 
 		if let Ok(rs) = self.recv(rq.id) {
-			if let Ok(rs_cvid) = RS_Cvid::parse_from_bytes(&rs.payload) {
+			if let Ok(rs_session) = RS_Session::parse_from_bytes(&rs.payload) {
 				debug!("Completed SID handshake in {:?} ms", operation_start.elapsed());
-				debug!("Assigned SID: {}", rs_cvid.sid);
-				debug!("Discovered server UUID: {}", rs_cvid.server_uuid);
-				debug!("Discovered server SID: {}", rs_cvid.server_cvid);
-				return Ok(rs_cvid.sid);
+				debug!("Assigned SID: {}", rs_session.instance_sid);
+				debug!("Discovered server UUID: {}", rs_session.server_uuid);
+				debug!("Discovered server SID: {}", rs_session.server_sid);
+				return Ok(rs_session.instance_sid);
 			}
 		}
 

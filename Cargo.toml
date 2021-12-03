@@ -2,6 +2,9 @@
 name = "com-sandpolis-agent-micro"
 version = "0.1.0"
 edition = "2021"
+
+[[bin]]
+name = "agent"
 path = "src/main/rust/main.rs"
 
 [dependencies]

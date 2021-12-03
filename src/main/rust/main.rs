@@ -8,46 +8,38 @@
 //                                                                            //
 //============================================================================//
 
-#[path = "../gen"]
+#[path = "../../gen/rust"]
 pub mod core {
 
-	#[path = "com.sandpolis.core.foundation"]
+	#[path = "core.foundation"]
 	pub mod foundation {
 		pub mod platform;
-		pub mod result;
 	}
 
-	#[path = "com.sandpolis.core.instance"]
+	#[path = "core.instance"]
 	pub mod instance {
 		pub mod auth;
 		pub mod group;
 		pub mod metatypes;
 	}
 
-	#[path = "com.sandpolis.core.net"]
+	#[path = "core.net"]
 	pub mod net {
 		pub mod message;
-		pub mod msg_cvid;
+		pub mod messages;
 	}
 }
 
-#[path = "../lib"]
-pub mod lib {
-	pub mod connection;
-	pub mod messages;
-	pub mod uuid;
-}
+pub mod connection;
 
 use anyhow::{bail, Result};
 use crate::core::instance::group::*;
-use dotproperties::parse_from_slice;
 use log::{debug, info, error};
 use protobuf::Message;
 use rust_embed::RustEmbed;
 use std::collections::HashMap;
 use std::net::TcpStream;
 use std::{thread, time};
-use crate::lib::connection::*;
 use predicates::{Predicate, prelude::*};
 use std::io::{BufRead};
 
