@@ -237,11 +237,12 @@ dependencies = [
 
 [[package]]
 name = "protobuf"
-version = "3.0.0-alpha.1"
+version = "3.0.0-alpha.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "179dfed5ac5d90df13ede91b3035443ec07e0ec964b86afb10700597b5f990bc"
+checksum = "5c0bfdba3fccfc6814bfc199f0597b5cad10f84935f057aab586d457a3de3049"
 dependencies = [
  "bytes",
+ "thiserror",
 ]
 
 [[package]]
@@ -374,6 +375,26 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "2dfed899f0eb03f32ee8c6a0aabdb8a7949659e3466561fc0adf54e26d88c5f4"
 dependencies = [
  "winapi-util",
+]
+
+[[package]]
+name = "thiserror"
+version = "1.0.30"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "854babe52e4df1653706b98fcfc05843010039b406875930a70e4d9644e5c417"
+dependencies = [
+ "thiserror-impl",
+]
+
+[[package]]
+name = "thiserror-impl"
+version = "1.0.30"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "aa32fd3f627f367fe16f893e2597ae3c05020f8bba2666a4e6ea73d377e5714b"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
 ]
 
 [[package]]
