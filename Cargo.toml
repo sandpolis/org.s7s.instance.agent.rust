@@ -16,5 +16,5 @@ protobuf = { version = "3.0.0-alpha", features = ["with-bytes"] }
 rust-embed = "5.9"
 rustls = "0.19.0"
 uuid = { version = "0.8", features = ["v4"] }
-webpki-roots = "0.21"
+webpki-roots = "0.22"
 webpki = "0.21.4"
