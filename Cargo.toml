@@ -11,7 +11,7 @@ path = "src/main/rust/main.rs"
 anyhow = "1.0"
 env_logger = "0.8"
 log = "0.4"
-predicates = "2.0.0"
+predicates = "2.1.2"
 protobuf = { version = "3.0.0-alpha", features = ["with-bytes"] }
 rust-embed = "5.9"
 rustls = "0.19.0"
